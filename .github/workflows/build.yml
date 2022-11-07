@@ -27,3 +27,9 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Deploy to Azure
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: LifeMasters
+        publish-profile: ${{ secrets.azureWebAppPublishProfile }}
+      
