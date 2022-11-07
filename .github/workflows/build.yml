@@ -27,9 +27,29 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish Server/BlazorSurveys.Server.csproj -c Release -o website
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: website
+        path: Server/website/**
+        if-no-files-found: error  
+      
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: website
+        path: website
     - name: Deploy to Azure
       uses: azure/webapps-deploy@v2
       with:
         app-name: LifeMasters
         publish-profile: ${{ secrets.azureWebAppPublishProfile }}
+        package: website
       
